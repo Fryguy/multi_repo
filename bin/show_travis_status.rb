@@ -3,7 +3,7 @@
 $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
-require 'manageiq/release'
+require 'multi_repo'
 require 'more_core_extensions/core_ext/array/tableize'
 require 'travis'
 require 'travis/pro/auto_login'
