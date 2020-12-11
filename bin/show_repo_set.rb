@@ -7,7 +7,7 @@ require 'manageiq/release'
 require 'optimist'
 
 opts = Optimist.options do
-  ManageIQ::Release.common_options(self, :only => :repo_set)
+  MultiRepo.common_options(self, :only => :repo_set)
 end
 
-puts ManageIQ::Release.repos_for(opts).collect(&:name)
+puts MultiRepo.repos_for(opts).collect(&:name)

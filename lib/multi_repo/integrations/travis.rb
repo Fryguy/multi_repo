@@ -1,7 +1,7 @@
 require 'yaml'
 
-module ManageIQ
-  module Release
+module MultiRepo
+  module Integrations
     class Travis
       def self.badge_name
         "Build Status"

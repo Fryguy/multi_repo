@@ -7,10 +7,10 @@ require 'manageiq/release'
 require 'optimist'
 
 opts = Optimist.options do
-  ManageIQ::Release.common_options(self)
+  MultiRepo.common_options(self)
 end
 
-ManageIQ::Release.each_repo(opts) do |repo|
+MultiRepo.each_repo(opts) do |repo|
   repo.fetch
   repo.chdir do
     repo.checkout("stable", "origin/stable")

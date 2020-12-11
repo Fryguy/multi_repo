@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class DestroyTag
       attr_reader :repo, :tag
 

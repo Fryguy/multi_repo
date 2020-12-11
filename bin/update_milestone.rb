@@ -11,11 +11,11 @@ opts = Optimist.options do
   opt :due_on, "The due date.",                   :type => :string
   opt :close,  "Whether to close the milestone.", :default => false
 
-  ManageIQ::Release.common_options(self)
+  MultiRepo.common_options(self)
 end
 Optimist.die(:due_on, "is required") if !opts[:close] && !opts[:due_on]
-Optimist.die(:due_on, "must be a date format") if opts[:due_on] && !ManageIQ::Release::UpdateMilestone.valid_date?(opts[:due_on])
+Optimist.die(:due_on, "must be a date format") if opts[:due_on] && !MultiRepo::Operations::UpdateMilestone.valid_date?(opts[:due_on])
 
-ManageIQ::Release.each_repo(opts) do |repo|
-  ManageIQ::Release::UpdateMilestone.new(repo, opts).run
+MultiRepo.each_repo(opts) do |repo|
+  MultiRepo::Operations::UpdateMilestone.new(repo, opts).run
 end

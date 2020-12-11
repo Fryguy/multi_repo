@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class License
       attr_reader :repo, :dry_run
 

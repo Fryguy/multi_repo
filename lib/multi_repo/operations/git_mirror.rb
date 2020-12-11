@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class GitMirror
       module StringFormatting
         def red;    "\e[31m#{self}\e[0m" end

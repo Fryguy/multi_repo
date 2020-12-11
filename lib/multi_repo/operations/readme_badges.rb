@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class ReadmeBadges
       attr_reader :repo, :dry_run
       attr_accessor :badges

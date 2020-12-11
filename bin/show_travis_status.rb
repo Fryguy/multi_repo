@@ -12,11 +12,11 @@ require 'optimist'
 opts = Optimist.options do
   opt :ref, "The branch or release tag to check status for.", :type => :string, :required => true
 
-  ManageIQ::Release.common_options(self, :except => :dry_run, :repo_set_default => nil)
+  MultiRepo.common_options(self, :except => :dry_run, :repo_set_default => nil)
 end
 opts[:repo_set] = opts[:ref].split("-").first unless opts[:repo] || opts[:repo_set]
 
-travis_repos = ManageIQ::Release.repos_for(opts).collect do |repo|
+travis_repos = MultiRepo.repos_for(opts).collect do |repo|
   next if repo.options.has_real_releases
 
   repo = Travis::Pro::Repository.find(repo.github_repo)

@@ -3,8 +3,8 @@ require 'json'
 require 'more_core_extensions/core_ext/array'
 require 'more_core_extensions/core_ext/hash'
 
-module ManageIQ
-  module Release
+module MultiRepo
+  module Integrations
     class CodeClimate
       def self.api_token
         @api_token ||= ENV["CODECLIMATE_API_TOKEN"]

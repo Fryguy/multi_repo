@@ -1,12 +1,12 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class UpdateLabels
       attr_reader :repo, :dry_run, :expected_labels
 
       def initialize(repo, dry_run: false, **_)
         @repo            = repo
         @dry_run         = dry_run
-        @expected_labels = ManageIQ::Release::Labels[repo]
+        @expected_labels = MultiRepo::Labels[repo]
       end
 
       def run
@@ -53,7 +53,7 @@ module ManageIQ
       end
 
       def github
-        ManageIQ::Release.github
+        MultiRepo.github
       end
     end
   end

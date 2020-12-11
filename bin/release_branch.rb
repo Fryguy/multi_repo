@@ -9,29 +9,29 @@ require 'optimist'
 opts = Optimist.options do
   opt :branch, "The new branch name.", :type => :string, :required => true
 
-  ManageIQ::Release.common_options(self, :except => :dry_run) # TODO: Implement dry_run
+  MultiRepo.common_options(self, :except => :dry_run) # TODO: Implement dry_run
 end
 
 review = StringIO.new
 post_review = StringIO.new
 
-ManageIQ::Release.repos_for(opts).each do |repo|
+MultiRepo.repos_for(opts).each do |repo|
   next if repo.options.has_real_releases
 
-  release_branch = ManageIQ::Release::ReleaseBranch.new(repo, opts)
+  release_branch = MultiRepo::Operations::ReleaseBranch.new(repo, opts)
 
-  puts ManageIQ::Release.header("Branching #{repo.name}")
+  puts MultiRepo.header("Branching #{repo.name}")
   release_branch.run
   puts
 
-  review.puts ManageIQ::Release.header(repo.name)
+  review.puts MultiRepo.header(repo.name)
   review.puts release_branch.review
   review.puts
   post_review.puts release_branch.post_review
 end
 
 puts
-puts ManageIQ::Release.separator
+puts MultiRepo.separator
 puts
 puts "Review the following:"
 puts

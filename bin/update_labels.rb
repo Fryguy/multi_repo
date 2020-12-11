@@ -7,10 +7,10 @@ require 'manageiq/release'
 require 'optimist'
 
 opts = Optimist.options do
-  ManageIQ::Release.common_options(self, :repo_set_default => nil)
+  MultiRepo.common_options(self, :repo_set_default => nil)
 end
-opts[:repo] = ManageIQ::Release::Labels.all.keys.sort unless opts[:repo] || opts[:repo_set]
+opts[:repo] = MultiRepo::Operations::Labels.all.keys.sort unless opts[:repo] || opts[:repo_set]
 
-ManageIQ::Release.each_repo(opts) do |repo|
-  ManageIQ::Release::UpdateLabels.new(repo.github_repo, opts).run
+MultiRepo.each_repo(opts) do |repo|
+  MultiRepo::Operations::UpdateLabels.new(repo.github_repo, opts).run
 end

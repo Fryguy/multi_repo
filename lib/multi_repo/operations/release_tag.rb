@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class ReleaseTag
       attr_reader :repo, :branch, :tag, :dry_run
 

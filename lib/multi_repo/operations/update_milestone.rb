@@ -1,7 +1,7 @@
 require "active_support/core_ext/time"
 
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class UpdateMilestone
       def self.valid_date?(date)
         !!parse_date(date)
@@ -79,7 +79,7 @@ module ManageIQ
       end
 
       def github
-        ManageIQ::Release.github
+        MultiRepo.github
       end
     end
   end

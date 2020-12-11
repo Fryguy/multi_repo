@@ -10,10 +10,10 @@ opts = Optimist.options do
   opt :project_id, "The project ID",                :type => :integer, :required => true
   opt :column,     "The column within the project", :type => :string,  :required => true
 
-  ManageIQ::Release.common_options(self, :only => :repo)
+  MultiRepo.common_options(self, :only => :repo)
 end
 
-github = ManageIQ::Release.github
+github = MultiRepo.github
 repo = opts[:repo].first
 projects_headers = {:accept => "application/vnd.github.inertia-preview+json"}
 

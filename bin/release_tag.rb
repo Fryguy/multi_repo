@@ -11,7 +11,7 @@ opts = Optimist.options do
   opt :branch, "The branch to tag from.", :type => :string
   opt :skip,   "The repo(s) to skip.",    :type => :strings
 
-  ManageIQ::Release.common_options(self, :repo_set_default => nil)
+  MultiRepo.common_options(self, :repo_set_default => nil)
 end
 opts[:branch] ||= opts[:tag].split("-").first
 opts[:repo_set] = opts[:branch] unless opts[:repo] || opts[:repo_set]
@@ -21,27 +21,27 @@ post_review = StringIO.new
 
 # Move manageiq repo to the end of the list.  The rake release script on manageiq
 #   depends on all of the other repos running their rake release scripts first.
-repos = ManageIQ::Release.repos_for(opts)
+repos = MultiRepo.repos_for(opts)
 repos = repos.partition { |r| r.github_repo != "ManageIQ/manageiq" }.flatten
 
 repos.each do |repo|
   next if Array(opts[:skip]).include?(repo.name)
   next if repo.options.has_real_releases || repo.options.skip_tag
 
-  release_tag = ManageIQ::Release::ReleaseTag.new(repo, opts)
+  release_tag = MultiRepo::Operations::ReleaseTag.new(repo, opts)
 
-  puts ManageIQ::Release.header("Tagging #{repo.name}")
+  puts MultiRepo.header("Tagging #{repo.name}")
   release_tag.run
   puts
 
-  review.puts ManageIQ::Release.header(repo.name)
+  review.puts MultiRepo.header(repo.name)
   review.puts release_tag.review
   review.puts
   post_review.puts release_tag.post_review
 end
 
 puts
-puts ManageIQ::Release.separator
+puts MultiRepo.separator
 puts
 puts "Review the following:"
 puts

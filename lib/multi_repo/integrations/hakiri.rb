@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Integrations
     class Hakiri
       def self.badge_details(repo, branch)
         {

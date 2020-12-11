@@ -1,7 +1,7 @@
 require 'pathname'
 
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class PullRequestBlasterOuter
       attr_reader :repo, :base, :head, :script, :dry_run, :message
 
@@ -55,7 +55,7 @@ module ManageIQ
       private
 
       def github
-        ManageIQ::Release.github
+        MultiRepo.github
       end
 
       def forked?

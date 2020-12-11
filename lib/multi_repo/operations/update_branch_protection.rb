@@ -1,5 +1,5 @@
-module ManageIQ
-  module Release
+module MultiRepo
+  module Operations
     class UpdateBranchProtection
       attr_reader :repo, :branch, :dry_run
 
@@ -33,7 +33,7 @@ module ManageIQ
       end
 
       def github
-        ManageIQ::Release.github
+        MultiRepo.github
       end
     end
   end

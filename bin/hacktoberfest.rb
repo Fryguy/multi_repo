@@ -11,10 +11,10 @@ opts = Optimist.options do
               "Pass --no-apply to remove the `hacktoberfest` label",
               :type => :boolean, :default => true
 
-  ManageIQ::Release.common_options(self, :only => :dry_run)
+  MultiRepo.common_options(self, :only => :dry_run)
 end
 
-class ManageIQ::Release::Hacktoberfest
+class MultiRepo::Operations::Hacktoberfest
   attr_reader :apply, :dry_run
 
   def initialize(apply:, dry_run: false, **_)
@@ -125,12 +125,12 @@ class ManageIQ::Release::Hacktoberfest
   end
 
   def org_repos
-    ManageIQ::Release.github_repo_names_for("ManageIQ")
+    MultiRepo.github_repo_names_for("ManageIQ")
   end
 
   def github
-    ManageIQ::Release.github
+    MultiRepo.github
   end
 end
 
-ManageIQ::Release::Hacktoberfest.new(opts).run
+MultiRepo::Operations::Hacktoberfest.new(opts).run
