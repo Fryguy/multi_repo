@@ -1,7 +1,5 @@
 require "minigit"
 
-require "active_support/core_ext/kernel/reporting"
-
 module MultiRepo
   module Integrations
     class Git
@@ -51,7 +49,11 @@ module MultiRepo
         quiet = args.detect { |a| a.is_a?(Hash) && a.key?(:quiet) }&.delete(:quiet)
         quiet = true if quiet.nil?
 
-        @git.send(quiet ? :capturing : :noncapturing).send(method, *args, &block)
+        if quiet
+          _silence_stderr { @git.capturing.send(method, *args, &block) }
+        else
+          @git.noncapturing.send(method, *args, &block)
+        end
       end
 
       def respond_to_missing(*args)
@@ -78,6 +80,19 @@ module MultiRepo
         cmd  = "git #{args.join(" ")}"
         puts "+ #{cmd}" if ENV["GIT_DEBUG"]
         raise MiniGit::GitError.new(args, $?) unless system(cmd)
+      end
+
+      def _silence_stderr
+        stream = $stderr
+
+        old_stream = stream.dup
+        stream.reopen(File::NULL)
+        stream.sync = true
+
+        yield
+      ensure
+        stream.reopen(old_stream)
+        old_stream.close
       end
     end
   end
