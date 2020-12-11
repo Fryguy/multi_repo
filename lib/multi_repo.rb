@@ -99,34 +99,14 @@ module MultiRepo
     end
   end
 
-  def self.github_api_token
-    @github_api_token ||= ENV["GITHUB_API_TOKEN"]
-  end
-
-  def self.github_api_token=(token)
-    @github_api_token = token
-  end
-
   #
   # Services
   #
 
-  def self.github
+  def self.github(**args)
     @github ||= begin
-      raise "Missing GitHub API Token" if github_api_token.nil?
-
-      require 'octokit'
-      Octokit::Client.new(
-        :access_token  => github_api_token,
-        :auto_paginate => true
-      )
+      require "multi_repo/integrations/github"
+      MultiRepo::Integrations::GitHub.new(**args)
     end
-  end
-
-  def self.github_repo_names_for(org)
-    github
-      .list_repositories(org, :type => "sources")
-      .reject { |r| r.fork? || r.archived? }
-      .map { |r| "#{org}/#{r.name}" }
   end
 end
