@@ -7,6 +7,7 @@ require 'multi_repo'
 require 'optimist'
 
 opts = Optimist.options do
+  opt :org,   "The GitHub organization", :type => :string, :required => true
   opt :apply, "Apply the `hacktoberfest` label to `good first issue` labels. "\
               "Pass --no-apply to remove the `hacktoberfest` label",
               :type => :boolean, :default => true
@@ -14,10 +15,11 @@ opts = Optimist.options do
   MultiRepo.common_options(self, :only => :dry_run)
 end
 
-class MultiRepo::Operations::Hacktoberfest
-  attr_reader :apply, :dry_run
+class Hacktoberfest
+  attr_reader :org, :apply, :dry_run
 
-  def initialize(apply:, dry_run: false, **_)
+  def initialize(org:, apply:, dry_run: false, **_)
+    @org     = org
     @apply   = apply
     @dry_run = dry_run
   end
@@ -35,11 +37,11 @@ class MultiRepo::Operations::Hacktoberfest
   private
 
   def good_first_issues
-    sorted_issues("org:ManageIQ archived:false is:open label:\"good first issue\" -label:hacktoberfest")
+    sorted_issues("org:#{org} archived:false is:open label:\"good first issue\" -label:hacktoberfest")
   end
 
   def hacktoberfest_issues
-    sorted_issues("org:ManageIQ archived:false is:open label:hacktoberfest")
+    sorted_issues("org:#{org} archived:false is:open label:hacktoberfest")
   end
 
   def sorted_issues(query)
@@ -125,7 +127,7 @@ class MultiRepo::Operations::Hacktoberfest
   end
 
   def org_repos
-    MultiRepo.github_repo_names_for("ManageIQ")
+    github.active_repo_names(org)
   end
 
   def github
@@ -133,4 +135,4 @@ class MultiRepo::Operations::Hacktoberfest
   end
 end
 
-MultiRepo::Operations::Hacktoberfest.new(opts).run
+Hacktoberfest.new(opts).run
