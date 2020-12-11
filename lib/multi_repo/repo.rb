@@ -1,5 +1,5 @@
-require 'minigit'
-require 'ostruct'
+require "ostruct"
+require "multi_repo/integrations/git"
 
 module MultiRepo
   class Repo
@@ -24,52 +24,17 @@ module MultiRepo
     end
 
     def git
-      @git ||= begin
-        retried = false
-        MiniGit.debug = true if ENV["GIT_DEBUG"]
-        MiniGit.new(path)
-      end
-    rescue ArgumentError => err
-      raise if retried
-      raise unless err.message.include?("does not seem to exist")
-
-      git_clone
-      retried = true
-      retry
+      @git ||= MultiRepo::Integrations::Git.new(path, github_repo, options.clone_source)
     end
 
-    def fetch(output: true)
-      if output
-        git.fetch(:all => true, :tags => true)
-      else
-        git.capturing.fetch(:all => true, :tags => true)
-      end
+    delegate_missing_to :git
+
+    def fetch
+      git.fetch_all
     end
 
     def checkout(branch, source = "origin/#{branch}")
-      git.reset(:hard => true)
-      git.checkout("-B", branch, source)
-    end
-
-    def branch?(branch)
-      git.rev_parse("--verify", branch)
-      true
-    rescue MiniGit::GitError
-      false
-    end
-
-    def remote?(remote)
-      begin
-        git.remote("show", remote)
-      rescue MiniGit::GitError => e
-        false
-      else
-        true
-      end
-    end
-
-    def remote_branch?(remote, branch)
-      git.capturing.ls_remote(remote, branch).present?
+      git.hard_checkout(branch, source)
     end
 
     def write_file(file, content, dry_run: false, **kwargs)
@@ -95,15 +60,6 @@ module MultiRepo
           File.exist?(f)
         end
       end
-    end
-
-    private
-
-    def git_clone
-      clone_source = options.clone_source || "git@github.com:#{github_repo}.git"
-      args = ["clone", clone_source, path]
-      puts "+ git #{args.join(" ")}" if ENV["GIT_DEBUG"]
-      raise MiniGit::GitError.new(args, $?) unless system("git #{args.join(" ")}")
     end
   end
 end

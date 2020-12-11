@@ -1,5 +1,8 @@
 require 'multi_repo/version'
 
+require "active_support/core_ext/object/blank"
+require "active_support/core_ext/module/delegation"
+
 require 'multi_repo/labels'
 require 'multi_repo/repo'
 require 'multi_repo/repo_set'
