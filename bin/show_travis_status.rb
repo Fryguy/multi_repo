@@ -7,16 +7,13 @@ require 'multi_repo'
 require 'more_core_extensions/core_ext/array/tableize'
 require 'travis'
 require 'travis/pro/auto_login'
-require 'optimist'
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options(:except => :dry_run) do
   opt :ref, "The branch or release tag to check status for.", :type => :string, :required => true
-
-  MultiRepo.common_options(self, :except => :dry_run, :repo_set_default => nil)
 end
 opts[:repo_set] = opts[:ref].split("-").first unless opts[:repo] || opts[:repo_set]
 
-travis_repos = MultiRepo.repos_for(opts).collect do |repo|
+travis_repos = MultiRepo::CLI.repos_for(opts).collect do |repo|
   next if repo.options.has_real_releases
 
   repo = Travis::Pro::Repository.find(repo.github_repo)

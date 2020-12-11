@@ -4,34 +4,31 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
 require 'multi_repo'
-require 'optimist'
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options(:except => :dry_run) do # TODO: Implement dry_run
   opt :branch, "The new branch name.", :type => :string, :required => true
-
-  MultiRepo.common_options(self, :except => :dry_run) # TODO: Implement dry_run
 end
 
 review = StringIO.new
 post_review = StringIO.new
 
-MultiRepo.repos_for(opts).each do |repo|
+MultiRepo::CLI.repos_for(opts).each do |repo|
   next if repo.options.has_real_releases
 
   release_branch = MultiRepo::Operations::ReleaseBranch.new(repo, opts)
 
-  puts MultiRepo.header("Branching #{repo.name}")
+  puts MultiRepo::CLI.header("Branching #{repo.name}")
   release_branch.run
   puts
 
-  review.puts MultiRepo.header(repo.name)
+  review.puts MultiRepo::CLI.header(repo.name)
   review.puts release_branch.review
   review.puts
   post_review.puts release_branch.post_review
 end
 
 puts
-puts MultiRepo.separator
+puts MultiRepo::CLI.separator
 puts
 puts "Review the following:"
 puts

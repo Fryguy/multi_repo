@@ -3,6 +3,10 @@ require 'active_support/core_ext/enumerable'
 
 module MultiRepo
   class RepoSet
+    def self.fetch(*args)
+      all.fetch(*args)
+    end
+
     def self.[](set_name)
       all[set_name]
     end

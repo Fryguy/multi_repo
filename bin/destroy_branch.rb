@@ -4,17 +4,12 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
 require 'multi_repo'
-require 'optimist'
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options(:except => :dry_run) do
   opt :branch, "The branch to destroy.", :type => :string, :required => true
-
-  MultiRepo.common_options(self, :except => :dry_run)
 end
 
-MultiRepo.each_repo(opts) do |repo|
-  repo.chdir do
-    system("git checkout master")
-    system("git branch -D #{opts[:branch]}")
-  end
+MultiRepo::CLI.each_repo(opts) do |repo|
+  repo.checkout("master")
+  repo.git.branch("-D", opts[:branch])
 end

@@ -4,14 +4,11 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
 require 'multi_repo'
-require 'optimist'
 require 'pp'
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options do
   opt :old, "The old label names.", :type => :strings, :required => true
   opt :new, "The new label names.", :type => :strings, :required => true
-
-  MultiRepo.common_options(self)
 end
 
 rename_hash = opts[:old].zip(opts[:new]).to_h

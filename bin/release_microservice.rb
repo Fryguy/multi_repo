@@ -4,13 +4,10 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
 require 'multi_repo'
-require 'optimist'
 
-opts = Optimist.options do
-  MultiRepo.common_options(self)
-end
+opts = MultiRepo::CLI.options
 
-MultiRepo.each_repo(opts) do |repo|
+MultiRepo::CLI.each_repo(opts) do |repo|
   repo.fetch
   repo.chdir do
     repo.checkout("stable", "origin/stable")

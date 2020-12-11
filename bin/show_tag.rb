@@ -5,12 +5,9 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 require 'bundler/setup'
 require 'multi_repo'
 require 'more_core_extensions/core_ext/array/tableize'
-require 'optimist'
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options(:except => :dry_run) do
   opt :tag, "The tag name.", :type => :string, :required => true
-
-  MultiRepo.common_options(self, :except => :dry_run, :repo_set_default => nil)
 end
 opts[:repo_set] = opts[:tag].split("-").first unless opts[:repo] || opts[:repo_set]
 
@@ -19,8 +16,8 @@ HEADER = %w(Repo SHA Message).freeze
 def show_tag(repo, tag)
   line =
     begin
-      repo.git.capturing.show({:summary => true, :oneline => true}, tag)
-    rescue MiniGit::GitError => err
+      repo.git.show({:summary => true, :oneline => true}, tag)
+    rescue MiniGit::GitError
       ""
     end
 
@@ -28,6 +25,6 @@ def show_tag(repo, tag)
   [repo.name, sha, message]
 end
 
-repos = MultiRepo.repos_for(opts).reject { |repo| repo.options.has_real_releases }
+repos = MultiRepo::CLI.repos_for(opts).reject { |repo| repo.options.has_real_releases }
 table = [HEADER] + repos.collect { |repo| show_tag(repo, opts[:tag]) }
 puts table.tableize(:max_width => 75)

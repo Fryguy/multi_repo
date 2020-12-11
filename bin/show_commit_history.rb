@@ -4,19 +4,16 @@ $LOAD_PATH << File.expand_path("../lib", __dir__)
 
 require 'bundler/setup'
 require 'multi_repo'
-require 'optimist'
 
 DISPLAY_FORMATS = %w[commit pr-title pr-label]
 
-opts = Optimist.options do
+opts = MultiRepo::CLI.options(:except => :dry_run) do
   opt :from,    "The commit log 'from' ref", :type => :string,  :required => true
   opt :to,      "The commit log 'to' ref" ,  :type => :string,  :required => true
   opt :display, "How to display the history. Valid values are: #{DISPLAY_FORMATS.join(", ")}", :default => "commit"
   opt :summary, "Display a summary of the repos.", :default => false
 
   opt :skip,   "The repos to skip", :default => ["manageiq-documentation"]
-
-  MultiRepo.common_options(self, :except => :dry_run)
 end
 Optimist.die :display, "must be one of: #{DISPLAY_FORMATS.join(", ")}" unless DISPLAY_FORMATS.include?(opts[:display])
 
@@ -26,11 +23,11 @@ puts "Git commit log between #{opts[:from]} and #{opts[:to]}\n\n"
 
 repos_with_changes = []
 
-MultiRepo.repos_for(opts).each do |repo|
+MultiRepo::CLI.repos_for(opts).each do |repo|
   next if repo.options.has_real_releases || repo.options.skip_tag
   next if opts[:skip].include?(repo.name)
 
-  puts MultiRepo.header(repo.name)
+  puts MultiRepo::CLI.header(repo.name)
   repo.fetch(output: false)
 
   case opts[:display]
